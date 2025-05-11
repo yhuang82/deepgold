@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 17, 24, 39;
+  --background-end-rgb: 24, 32, 48;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(120deg, #181e29 0%, #232b3e 100%);
+  font-family: "Inter", "Helvetica Neue", Arial, "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl shadow-xl bg-gray-800/90 border border-gray-700 p-6;
+    box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.18);
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary to-secondary text-gray-900 font-bold py-2 px-6 rounded-xl shadow-md transition-all;
+  }
+
+  .btn-primary:hover {
+    @apply brightness-110 shadow-lg;
+  }
+
+  h1,
+  .h1 {
+    @apply text-3xl font-extrabold mb-2;
+  }
+  h2,
+  .h2 {
+    @apply text-xl font-bold mb-2;
+  }
+}
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(31, 41, 55);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(75, 85, 99);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(107, 114, 128);
+}
