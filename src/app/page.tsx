@@ -2,7 +2,7 @@ import { FC } from "react";
 import Image from "next/image";
 // import { ConnectWallet } from "@coinbase/onchainkit";
 import { Wallet } from "@coinbase/onchainkit/wallet";
-
+import KLineChart from "./KLineChart";
 
 // 顶部栏组件
 const TopBar: FC = () => {
@@ -38,8 +38,8 @@ const TopBar: FC = () => {
 // 左侧面板组件
 const LeftPanel: FC = () => {
   return (
-    <aside className="flex flex-col space-y-6 h-full flex-[1] min-w-[200px] max-w-[240px]">
-      <div className="card h-full flex flex-col justify-between p-4">
+    <aside className="flex flex-col space-y-6 h-full flex-[1.1] min-w-[160px] max-w-[220px] px-2 md:px-4">
+      <div className="card h-full flex flex-col justify-between p-3 md:p-4">
         <div>
           <div className="flex items-center mb-2">
             <span className="text-2xl mr-2">🪙</span>
@@ -49,11 +49,11 @@ const LeftPanel: FC = () => {
             购买数字黄金，享受安全便捷的投资体验。
           </p>
         </div>
-        <div className="h-24 bg-gray-700/60 rounded-lg flex items-center justify-center text-gray-500">
+        <div className="h-20 md:h-24 bg-gray-700/60 rounded-lg flex items-center justify-center text-gray-500">
           功能开发中…
         </div>
       </div>
-      <div className="card h-full flex flex-col justify-between p-4">
+      <div className="card h-full flex flex-col justify-between p-3 md:p-4">
         <div>
           <div className="flex items-center mb-2">
             <span className="text-2xl mr-2">🏦</span>
@@ -63,7 +63,7 @@ const LeftPanel: FC = () => {
             黄金抵押借贷，释放资产流动性。
           </p>
         </div>
-        <div className="h-24 bg-gray-700/60 rounded-lg flex items-center justify-center text-gray-500">
+        <div className="h-20 md:h-24 bg-gray-700/60 rounded-lg flex items-center justify-center text-gray-500">
           功能开发中…
         </div>
       </div>
@@ -74,14 +74,14 @@ const LeftPanel: FC = () => {
 // 中间面板组件
 const CenterPanel: FC = () => {
   return (
-    <section className="flex flex-col items-center flex-[2.5] min-w-[400px] h-full">
-      <div className="card w-full h-full flex flex-col items-center justify-center p-2">
+    <section className="flex flex-col items-center flex-[2.5] min-w-[0] h-full">
+      <div className="card w-full h-full flex flex-col items-center justify-center p-1 md:p-2">
         <div className="flex items-center mb-2 w-full">
           <span className="text-2xl mr-2">📈</span>
           <h2 className="h2 text-[#FFD700]">K-Line Chart</h2>
         </div>
         <div className="w-full flex-1 bg-gray-700/60 rounded-lg flex items-center justify-center text-gray-500">
-          K线图组件占位
+          <KLineChart />
         </div>
       </div>
     </section>
@@ -91,8 +91,8 @@ const CenterPanel: FC = () => {
 // 右侧面板组件
 const RightPanel: FC = () => {
   return (
-    <aside className="flex flex-col h-full flex-[1] min-w-[200px] max-w-[240px]">
-      <div className="card h-full flex flex-col justify-between p-4">
+    <aside className="flex flex-col h-full flex-[1.5] min-w-[220px] max-w-[340px] px-2 md:px-4">
+      <div className="card h-full flex flex-col justify-between p-3 md:p-4">
         <div>
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FFD700] to-[#00FFC2] flex items-center justify-center mr-3">
@@ -104,16 +104,20 @@ const RightPanel: FC = () => {
             聊天内容占位
           </div>
         </div>
-        <div className="flex items-center mt-auto">
+        <form className="flex items-center mt-auto gap-2">
           <input
             className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#00FFC2]"
             placeholder="输入你的投资问题..."
             disabled
           />
-          <button className="ml-2 btn-primary opacity-60 cursor-not-allowed">
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-[#FFD700] to-[#00FFC2] text-gray-900 font-bold py-2 px-5 rounded-xl shadow-md transition-all hover:brightness-110 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#00FFC2]"
+            disabled
+          >
             发送
           </button>
-        </div>
+        </form>
       </div>
     </aside>
   );
@@ -123,8 +127,8 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
       <TopBar />
-      <div className="flex-1 flex flex-col items-center justify-center py-6">
-        <div className="w-full max-w-7xl h-[calc(100vh-120px)] flex flex-row justify-between items-stretch px-8 gap-5">
+      <div className="flex-1 flex flex-col items-center justify-center py-3 md:py-6">
+        <div className="w-full h-[calc(100vh-120px)] flex flex-row justify-between items-stretch gap-1 md:gap-5 px-2 md:px-4 xl:px-8">
           <LeftPanel />
           <CenterPanel />
           <RightPanel />
