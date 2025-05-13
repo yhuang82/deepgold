@@ -11,6 +11,13 @@ type KLineData = {
   volume: number;
 };
 
+// API返回的数据类型
+type KlineMessage = {
+  topic: string;
+  symbol: string;
+  data: KLineData[];
+};
+
 const PADDING_LEFT = 72; // 再加大左侧padding
 const PADDING_RIGHT = 40;
 const PADDING_TOP = 40;
@@ -107,12 +114,42 @@ interface KLineChartProps {
 }
 
 const KLineChart: React.FC<KLineChartProps> = ({ data }) => {
-  const [cache, setCache] = useState<KLineData[]>(data || mockData);
+  const [cache, setCache] = useState<KLineData[]>([]);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 700, height: 320 });
   const [tooltip, setTooltip] = useState<{ x: number; y: number } | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // 从API获取数据
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/latest");
+        const klineMessage: KlineMessage = await response.json();
+        console.log("获取到的新数据:", klineMessage);
+
+        if (klineMessage.data && klineMessage.data.length > 0) {
+          // 更新缓存，保持最新的10条数据
+          setCache((prev) => {
+            const newCache = [...prev, ...klineMessage.data];
+            return newCache.slice(-10); // 只保留最新的10条数据
+          });
+        }
+      } catch (error) {
+        console.error("获取数据失败:", error);
+      }
+    };
+
+    // 立即获取一次数据
+    fetchData();
+
+    // 设置定时器，每分钟获取一次数据
+    const intervalId = setInterval(fetchData, 60000);
+
+    // 清理定时器
+    return () => clearInterval(intervalId);
+  }, []);
 
   // 响应式canvas尺寸
   useEffect(() => {
