@@ -1,4 +1,5 @@
-import { FC } from "react";
+"use client";
+import { FC, useEffect, useState } from "react";
 import Image from "next/image";
 // import { ConnectWallet } from "@coinbase/onchainkit";
 import { Wallet } from "@coinbase/onchainkit/wallet";
@@ -6,6 +7,27 @@ import KLineChart from "./KLineChart";
 
 // 顶部栏组件
 const TopBar: FC = () => {
+  const [deepGoldPrice, setDeepGoldPrice] = useState<number | null>(null);
+
+  // 获取最新K线close price
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/latest");
+        const klineMessage = await response.json();
+        if (klineMessage.data && klineMessage.data.length > 0) {
+          const last = klineMessage.data[klineMessage.data.length - 1];
+          setDeepGoldPrice(last.close);
+        }
+      } catch (e) {
+        // 可以选择设置为null或保留上一次价格
+      }
+    };
+    fetchPrice();
+    const interval = setInterval(fetchPrice, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <header className="w-full h-20 flex items-center justify-between px-8 bg-gray-900/80 border-b border-gray-800 shadow-sm sticky top-0 z-20">
       <div className="flex items-center space-x-4">
@@ -13,19 +35,16 @@ const TopBar: FC = () => {
           {/* LOGO占位 */}
           <span className="text-2xl font-bold text-[#FFD700]">G</span>
         </div>
-        <div className="flex space-x-2">
-          <div className="card flex flex-col items-center px-4 py-2 min-w-[110px]">
-            <span className="text-xs text-gray-400">XAU/USD</span>
-            <span className="text-[#FFD700] font-bold">$2,345.67</span>
-          </div>
-          <div className="card flex flex-col items-center px-4 py-2 min-w-[110px]">
-            <span className="text-xs text-gray-400">XAU/EUR</span>
-            <span className="text-[#FFD700] font-bold">€2,123.45</span>
-          </div>
-          <div className="card flex flex-col items-center px-4 py-2 min-w-[110px]">
-            <span className="text-xs text-gray-400">XAU/CNY</span>
-            <span className="text-[#FFD700] font-bold">¥16,789.01</span>
-          </div>
+        <div className="flex flex-col justify-center ml-4">
+          <span className="text-xs text-gray-400">DeepGold Price</span>
+          <span className="text-2xl font-bold text-[#FFD700]">
+            {deepGoldPrice !== null
+              ? `$${deepGoldPrice.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`
+              : "--"}
+          </span>
         </div>
       </div>
       <div className="ml-4">
