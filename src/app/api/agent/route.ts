@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
+
+interface GoldData {
+  timestamp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
 
 export async function POST(req: Request) {
   try {
@@ -30,7 +37,7 @@ export async function POST(req: Request) {
 
       const formattedData = goldData
         .map(
-          (data) => `
+          (data: GoldData) => `
         Timestamp: ${new Date(data.timestamp).toLocaleString()}
         Open: ${data.open}
         High: ${data.high}
@@ -51,18 +58,30 @@ export async function POST(req: Request) {
       )}\n\nUser question: ${userMessage}`;
     }
 
-    const completion = await openai.chat.completions.create({
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      model: "gpt-4-turbo-preview",
-      temperature: 0.7,
-      max_tokens: 500,
+    const response = await fetch(DEEPSEEK_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      }),
     });
 
+    if (!response.ok) {
+      throw new Error(`Deepseek API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
     return NextResponse.json({
-      response: completion.choices[0].message.content,
+      response: data.choices[0].message.content,
     });
   } catch (error) {
     console.error("Error in agent API:", error);
