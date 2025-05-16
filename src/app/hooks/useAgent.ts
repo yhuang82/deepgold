@@ -61,7 +61,11 @@ export function useAgent() {
     setMessages((prev) => [...prev, newMessage]);
     setIsThinking(true);
 
-    const responseMessage = await messageAgent(input, goldData, isAnalysis);
+    const responseMessage = await messageAgent(
+      input,
+      isAnalysis ? goldData : undefined,
+      isAnalysis
+    );
 
     if (responseMessage) {
       const agentMessage: Message = {

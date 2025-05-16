@@ -130,10 +130,11 @@ const KLineChart: React.FC<KLineChartProps> = ({ data }) => {
         console.log("获取到的新数据:", klineMessage);
 
         if (klineMessage.data && klineMessage.data.length > 0) {
-          // 更新缓存，保持最新的10条数据
+          // 更新缓存，保留所有历史数据
           setCache((prev) => {
             const newCache = [...prev, ...klineMessage.data];
-            return newCache.slice(-10); // 只保留最新的10条数据
+            // 按时间戳排序
+            return newCache.sort((a, b) => a.timestamp - b.timestamp);
           });
         }
       } catch (error) {
@@ -144,7 +145,7 @@ const KLineChart: React.FC<KLineChartProps> = ({ data }) => {
     // 立即获取一次数据
     fetchData();
 
-    // 设置定时器，每分钟获取一次数据
+    // 设置定时器，每60秒获取一次数据
     const intervalId = setInterval(fetchData, 60000);
 
     // 清理定时器
@@ -220,7 +221,14 @@ const KLineChart: React.FC<KLineChartProps> = ({ data }) => {
       const x =
         PADDING_LEFT + BAR_GAP + i * (barWidth + BAR_GAP) + barWidth / 2;
       ctx.fillStyle = "#aaa";
-      ctx.fillText(String(d.timestamp), x, height - PADDING_BOTTOM + 6);
+      // 格式化时间戳
+      const date = new Date(d.timestamp);
+      const timeStr = date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+      ctx.fillText(timeStr, x, height - PADDING_BOTTOM + 6);
     }
     // 画K线
     cache.forEach((d, i) => {
@@ -344,7 +352,18 @@ const KLineChart: React.FC<KLineChartProps> = ({ data }) => {
           }}
         >
           <div>
-            Timestamp: <b>{cache[hoverIndex].timestamp}</b>
+            Time:{" "}
+            <b>
+              {new Date(cache[hoverIndex].timestamp).toLocaleTimeString(
+                "en-US",
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: false,
+                }
+              )}
+            </b>
           </div>
           <div>
             Open: <b>{cache[hoverIndex].open}</b>

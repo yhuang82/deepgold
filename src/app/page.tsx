@@ -196,7 +196,7 @@ const RightPanel: FC = () => {
     if (!input.trim() || isThinking) return;
     const message = input;
     setInput("");
-    await sendMessage(message, goldData);
+    await sendMessage(message);
   };
 
   const onAnalyze = async () => {

@@ -53,7 +53,7 @@ export const useGoldData = () => {
     // 立即获取一次数据
     fetchLatestData();
 
-    // 每分钟获取一次新数据
+    // 每60秒获取一次新数据
     const interval = setInterval(fetchLatestData, 60000);
 
     return () => clearInterval(interval);
