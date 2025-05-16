@@ -13,7 +13,13 @@ const TopBar: FC<{
   goldBalance: number;
   isWalletConnected: boolean;
   setIsWalletConnected: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ goldBalance, isWalletConnected, setIsWalletConnected }) => {
+  handleConnectWallet: () => void;
+}> = ({
+  goldBalance,
+  isWalletConnected,
+  setIsWalletConnected,
+  handleConnectWallet,
+}) => {
   const goldData = useGoldData();
   const [deepGoldPrice, setDeepGoldPrice] = useState<number | null>(null);
 
@@ -47,7 +53,7 @@ const TopBar: FC<{
         {!isWalletConnected ? (
           <button
             className="bg-gradient-to-r from-[#FFD700] to-[#00FFC2] text-gray-900 font-bold px-6 py-2 rounded-xl shadow-md transition-all hover:brightness-110 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#00FFC2]"
-            onClick={() => setIsWalletConnected(true)}
+            onClick={handleConnectWallet}
           >
             Connect Wallet
           </button>
@@ -315,7 +321,13 @@ export default function Home() {
   // 钱包连接状态（mock，后续可接入真实钱包）
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   // 黄金币余额状态提升到Home
-  const [goldBalance, setGoldBalance] = useState(12.3456); // mock初始余额
+  const [goldBalance, setGoldBalance] = useState(0); // 初始为0
+
+  // 连接钱包时初始化余额
+  const handleConnectWallet = () => {
+    setIsWalletConnected(true);
+    setGoldBalance(12.3456); // 这里可以替换为真实钱包余额
+  };
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -323,6 +335,7 @@ export default function Home() {
         goldBalance={goldBalance}
         isWalletConnected={isWalletConnected}
         setIsWalletConnected={setIsWalletConnected}
+        handleConnectWallet={handleConnectWallet}
       />
       <div className="flex-1 flex flex-col items-center justify-center py-3 md:py-6">
         <div className="w-full h-[calc(100vh-120px)] flex flex-row justify-between items-stretch gap-1 md:gap-5 px-2 md:px-4 xl:px-8">

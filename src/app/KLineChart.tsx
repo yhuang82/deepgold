@@ -125,15 +125,14 @@ const KLineChart: React.FC<KLineChartProps> = ({ data }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/latest");
+        const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+        const response = await fetch(`${API_BASE}/latest`);
         const klineMessage: KlineMessage = await response.json();
         console.log("获取到的新数据:", klineMessage);
 
         if (klineMessage.data && klineMessage.data.length > 0) {
-          // 更新缓存，保留所有历史数据
           setCache((prev) => {
             const newCache = [...prev, ...klineMessage.data];
-            // 按时间戳排序
             return newCache.sort((a, b) => a.timestamp - b.timestamp);
           });
         }
@@ -141,14 +140,8 @@ const KLineChart: React.FC<KLineChartProps> = ({ data }) => {
         console.error("获取数据失败:", error);
       }
     };
-
-    // 立即获取一次数据
     fetchData();
-
-    // 设置定时器，每60秒获取一次数据
     const intervalId = setInterval(fetchData, 60000);
-
-    // 清理定时器
     return () => clearInterval(intervalId);
   }, []);
 
@@ -216,19 +209,21 @@ const KLineChart: React.FC<KLineChartProps> = ({ data }) => {
     // 画横轴刻度和label
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
+    const showLabelStep = Math.ceil(barCount / 6);
     for (let i = 0; i < barCount; i++) {
       const d = cache[i];
       const x =
         PADDING_LEFT + BAR_GAP + i * (barWidth + BAR_GAP) + barWidth / 2;
       ctx.fillStyle = "#aaa";
-      // 格式化时间戳
-      const date = new Date(d.timestamp);
-      const timeStr = date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
-      ctx.fillText(timeStr, x, height - PADDING_BOTTOM + 6);
+      if (i % showLabelStep === 0 || i === barCount - 1) {
+        const date = new Date(d.timestamp);
+        const timeStr = date.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+        ctx.fillText(timeStr, x, height - PADDING_BOTTOM + 6);
+      }
     }
     // 画K线
     cache.forEach((d, i) => {

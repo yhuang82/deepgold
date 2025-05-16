@@ -15,7 +15,8 @@ export const useGoldData = () => {
   useEffect(() => {
     const fetchLatestData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/latest");
+        const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+        const response = await fetch(`${API_BASE}/latest`);
         const klineMessage = await response.json();
 
         if (klineMessage.data && klineMessage.data.length > 0) {
